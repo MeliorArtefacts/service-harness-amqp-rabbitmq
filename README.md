@@ -80,7 +80,7 @@ The RabbitMQ client may be configured using these application properties.
 |`connection-timeout`|30 s|The amount of time to allow for a new connection to open to the RabbitMQ server|
 |`validate-on-borrow`|false|Indicates if a connection must be validated when it is borrowed from the JDBC connection pool|
 |`validation-timeout`|5 s|The amount of time to allow for a connection to be validated|
-|`request-timeout`|60 s||The amount of time to allow for a request to the RabbitMQ server to complete
+|`request-timeout`|60 s|The amount of time to allow for a request to the RabbitMQ server to complete|
 |`backoff-period`|1 s|The amount of time to back off when the circuit breaker trips|
 |`backoff-multiplier`|1|The factor with which to increase the backoff period when the circuit breaker trips repeatedly|
 |`backoff-limit`||The maximum amount of time to back off when the circuit breaker trips repeatedly|
