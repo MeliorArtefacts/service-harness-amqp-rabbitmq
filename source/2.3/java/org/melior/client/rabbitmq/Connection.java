@@ -32,7 +32,7 @@ public class Connection extends org.melior.client.core.Connection<RabbitMQClient
     final RabbitMQClientConfig configuration,
     final ConnectionPool<RabbitMQClientConfig, Connection, org.springframework.amqp.rabbit.connection.Connection> connectionPool,
     final RabbitMQConnectionFactory connectionFactory) throws RemotingException{
-        super(configuration, connectionPool, org.springframework.amqp.rabbit.connection.Connection.class);
+        super(configuration, connectionPool);
 
         this.connectionFactory = connectionFactory;
   }
