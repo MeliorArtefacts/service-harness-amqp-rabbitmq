@@ -17,7 +17,7 @@ import org.melior.client.core.ClientConfig;
 public class RabbitMQClientConfig extends ClientConfig{
     private String exchange;
 
-    private String queue;
+    private String routingKey;
 
   /**
    * Constructor.
@@ -35,7 +35,7 @@ public class RabbitMQClientConfig extends ClientConfig{
     final RabbitMQClientConfig clientConfig){
     super.configure(clientConfig);
     this.exchange = clientConfig.exchange;
-    this.queue = clientConfig.queue;
+    this.routingKey = clientConfig.routingKey;
 
     return this;
   }
@@ -58,20 +58,20 @@ public class RabbitMQClientConfig extends ClientConfig{
   }
 
   /**
-   * Get queue.
-   * @return The queue
+   * Get routing key.
+   * @return The routing key
    */
-  public String getQueue(){
-    return queue;
+  public String getRoutingKey(){
+    return routingKey;
   }
 
   /**
-   * Set queue.
-   * @param queue The queue
+   * Set routing key.
+   * @param routingKey The routing key
    */
-  public void setQueue(
-    final String queue){
-    this.queue = queue;
+  public void setRoutingKey(
+    final String routingKey){
+    this.routingKey = routingKey;
   }
 
 }

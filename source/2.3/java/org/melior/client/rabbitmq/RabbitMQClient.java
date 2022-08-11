@@ -93,8 +93,8 @@ public class RabbitMQClient extends RabbitMQClientConfig{
       throw new RemotingException(ExceptionType.LOCAL_APPLICATION, "Password must be configured.");
     }
 
-        if (StringUtils.hasLength(getQueue()) == false){
-      throw new RemotingException(ExceptionType.LOCAL_APPLICATION, "Queue must be configured.");
+        if (StringUtils.hasLength(getRoutingKey()) == false){
+      throw new RemotingException(ExceptionType.LOCAL_APPLICATION, "Routing key must be configured.");
     }
 
         objectMapper = new ObjectMapper();
@@ -111,8 +111,6 @@ public class RabbitMQClient extends RabbitMQClientConfig{
   /**
    * Send message.
    * @param message The message object
-   * @param responseType The response object type
-   * @return The response object
    * @throws RemotingException if unable to send the message
    */
   public <Rq> void send(
@@ -158,12 +156,12 @@ public class RabbitMQClient extends RabbitMQClientConfig{
     try{
 
             if (responseType != Void.class){
-                reply = amqpTemplate.convertSendAndReceive(getQueue(), (Object) payload, new MessagePostProcessor(transactionContext.getTransactionId()));
+                reply = amqpTemplate.convertSendAndReceive(getRoutingKey(), (Object) payload, new MessagePostProcessor(transactionContext.getTransactionId()));
 
                 payload = (reply == null) ? null : (String) reply;
       }
       else{
-                amqpTemplate.convertAndSend(getQueue(), (Object) payload, new MessagePostProcessor((transactionContext.getTransactionId())));
+                amqpTemplate.convertAndSend(getRoutingKey(), (Object) payload, new MessagePostProcessor((transactionContext.getTransactionId())));
 
                 payload = null;
       }
