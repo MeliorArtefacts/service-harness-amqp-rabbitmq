@@ -14,6 +14,7 @@ import org.melior.context.transaction.TransactionContext;
 import org.melior.logging.core.Logger;
 import org.melior.logging.core.LoggerFactory;
 import org.melior.service.exception.ExceptionType;
+import org.melior.util.object.ObjectUtil;
 import org.melior.util.time.Timer;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -44,7 +45,9 @@ public class RabbitMQClient extends RabbitMQClientConfig {
 
     private ObjectMapper objectMapper;
 
-    private RabbitTemplate amqpTemplate;
+    private ConnectionManager connectionManager;
+
+    private RabbitTemplate rabbitMQTemplate;
 
     /**
      * Constructor.
@@ -84,9 +87,7 @@ public class RabbitMQClient extends RabbitMQClientConfig {
      */
     private void initialize() throws RemotingException {
 
-        ConnectionManager connectionManager;
-
-        if (amqpTemplate != null) {
+        if (rabbitMQTemplate != null) {
             return;
         }
 
@@ -102,8 +103,9 @@ public class RabbitMQClient extends RabbitMQClientConfig {
             throw new RemotingException(ExceptionType.LOCAL_APPLICATION, "Password must be configured.");
         }
 
-        if (StringUtils.hasLength(getRoutingKey()) == false) {
-            throw new RemotingException(ExceptionType.LOCAL_APPLICATION, "Routing key must be configured.");
+        if ((StringUtils.hasLength(getRoutingKey()) == false)
+            && (StringUtils.hasLength(getQueue()) == false)) {
+            throw new RemotingException(ExceptionType.LOCAL_APPLICATION, "Routing key or queue must be configured.");
         }
 
         objectMapper = new ObjectMapper();
@@ -111,10 +113,22 @@ public class RabbitMQClient extends RabbitMQClientConfig {
 
         connectionManager = new ConnectionManager(this, new ConnectionFactory(async, this));
 
-        amqpTemplate = new RabbitTemplate();
-        amqpTemplate.setExchange((getExchange() == null) ? amqpTemplate.getExchange() : getExchange());
-        amqpTemplate.setConnectionFactory(connectionManager);
-        amqpTemplate.setReceiveTimeout(getRequestTimeout());
+        rabbitMQTemplate = new RabbitTemplate();
+        rabbitMQTemplate.setExchange((getExchange() == null) ? rabbitMQTemplate.getExchange() : getExchange());
+        rabbitMQTemplate.setConnectionFactory(connectionManager);
+        rabbitMQTemplate.setReceiveTimeout(getRequestTimeout());
+    }
+
+    /**
+     * Get connection factory.
+     * @return The connection factory
+     * @throws RemotingException if unable to get the connection factory
+     */
+    public org.springframework.amqp.rabbit.connection.ConnectionFactory getConnectionFactory() throws RemotingException {
+
+        initialize();
+
+        return connectionManager;
     }
 
     /**
@@ -172,13 +186,15 @@ public class RabbitMQClient extends RabbitMQClientConfig {
 
             if (responseType != Void.class) {
 
-                reply = amqpTemplate.convertSendAndReceive(getRoutingKey(), (Object) payload, new MessagePostProcessor(transactionContext.getTransactionId()));
+                reply = rabbitMQTemplate.convertSendAndReceive(ObjectUtil.coalesce(getRoutingKey(), getQueue()), (Object) payload,
+                    new MessagePostProcessor(transactionContext.getTransactionId()));
 
                 payload = (reply == null) ? null : (String) reply;
             }
             else {
 
-                amqpTemplate.convertAndSend(getRoutingKey(), (Object) payload, new MessagePostProcessor((transactionContext.getTransactionId())));
+                rabbitMQTemplate.convertAndSend(ObjectUtil.coalesce(getRoutingKey(), getQueue()), (Object) payload,
+                    new MessagePostProcessor((transactionContext.getTransactionId())));
 
                 payload = null;
             }

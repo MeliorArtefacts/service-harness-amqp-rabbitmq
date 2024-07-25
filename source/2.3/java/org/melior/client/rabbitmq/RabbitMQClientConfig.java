@@ -20,6 +20,8 @@ public class RabbitMQClientConfig extends ClientConfig {
 
     private String routingKey;
 
+    private String queue;
+
     /**
      * Constructor.
      */
@@ -38,6 +40,7 @@ public class RabbitMQClientConfig extends ClientConfig {
         super.configure(clientConfig);
         this.exchange = clientConfig.exchange;
         this.routingKey = clientConfig.routingKey;
+        this.queue = clientConfig.queue;
 
         return this;
     }
@@ -74,6 +77,23 @@ public class RabbitMQClientConfig extends ClientConfig {
     public void setRoutingKey(
         final String routingKey) {
         this.routingKey = routingKey;
+    }
+
+    /**
+     * Get queue.
+     * @return The queue
+     */
+    public String getQueue() {
+        return queue;
+    }
+
+    /**
+     * Set queue.
+     * @param queue The queue
+     */
+    public void setQueue(
+        final String queue) {
+        this.queue = queue;
     }
 
 }
