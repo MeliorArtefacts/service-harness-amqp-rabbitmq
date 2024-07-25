@@ -75,6 +75,9 @@ The RabbitMQ client may be configured using these application properties.
 |`url`||The URL of the RabbitMQ server|
 |`username`||The user name required by the RabbitMQ server|
 |`password`||The password required by the RabbitMQ server|
+|`exchange`||The message exchange to bind to in the RabbitMQ server|
+|`routing-key`||The routing key to use when sending messages to the RabbitMQ server|
+|`queue`||An alternative name for the routing-key parameter, if the queue name and routing key are configured the same in the RabbitMQ server|
 |`minimum-connections`|0|The minimum number of connections to open to the RabbitMQ server|
 |`maximum-connections`|1000|The maximum number of connections to open to the RabbitMQ server|
 |`connection-timeout`|30 s|The amount of time to allow for a new connection to open to the RabbitMQ server|
